@@ -251,6 +251,14 @@ export abstract class Madara extends Source {
                     view_more: true,
                 })
             },
+            {
+                request: this.constructAjaxHomepageRequest(0, 10, '_wp_manga_status', 'end'),
+                section: createHomeSection({
+                    id: '3',
+                    title: 'COMPLETED',
+                    view_more: true,
+                })
+            },
         ]
 
         const promises: Promise<void>[] = []
@@ -278,6 +286,7 @@ export abstract class Madara extends Source {
         // We only have one homepage section ID, so we don't need to worry about handling that any
         const page = metadata?.page ?? 0   // Default to page 0
         let sortBy = ''
+        let mangaStatus = ''
         switch (homepageSectionId) {
             case '0': {
                 sortBy = '_latest_update'
@@ -291,8 +300,13 @@ export abstract class Madara extends Source {
                 sortBy = '_wp_manga_views'
                 break
             }
+            case '3': {
+                sortBy = '_wp_manga_status'
+                mangaStatus = 'end'
+                break
+            }
         }
-        const request = this.constructAjaxHomepageRequest(page, 50, sortBy)
+        const request = this.constructAjaxHomepageRequest(page, 50, sortBy, mangaStatus)
         const data = await this.requestManager.schedule(request, 1)
         this.CloudFlareError(data.status)
         const $ = this.cheerio.load(data.data)
@@ -356,7 +370,7 @@ export abstract class Madara extends Source {
     /**
      * Constructs requests to be sent to the Madara /admin-ajax.php endpoint.
      */
-    constructAjaxHomepageRequest(page: number, postsPerPage: number, meta_key: string): any {
+    constructAjaxHomepageRequest(page: number, postsPerPage: number, meta_key: string, meta_value = ''): any {
         return createRequestObject({
             url: `${this.baseUrl}/wp-admin/admin-ajax.php`,
             method: 'POST',
@@ -373,7 +387,8 @@ export abstract class Madara extends Source {
                 'vars[sidebar]': 'right',
                 'vars[post_type]': 'wp-manga',
                 'vars[order]': 'desc',
-                'vars[meta_key]': meta_key
+                'vars[meta_key]': meta_key,
+                'vars[meta_value]': meta_value
 
             },
             cookies: [createCookie({name: 'wpmanga-adault', value: '1', domain: this.baseUrl})]
