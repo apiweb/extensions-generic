@@ -370,7 +370,7 @@ export abstract class Madara extends Source {
     /**
      * Constructs requests to be sent to the Madara /admin-ajax.php endpoint.
      */
-    constructAjaxHomepageRequest(page: number, postsPerPage: number, meta_key: string, meta_value = ''): any {
+    constructAjaxHomepageRequest(page: number, postsPerPage: number, meta_key: string, meta_value?: string): any {
         return createRequestObject({
             url: `${this.baseUrl}/wp-admin/admin-ajax.php`,
             method: 'POST',
