@@ -638,7 +638,7 @@ class Madara extends paperback_extensions_common_1.Source {
                     })
                 },
                 {
-                    request: this.constructAjaxHomepageRequest(0, 10, '_wp_manga_status', 'end'),
+                    request: this.constructAjaxHomepageRequest2(0, 10, '_wp_manga_status', 'end'),
                     section: createHomeSection({
                         id: '3',
                         title: 'COMPLETED',
@@ -763,6 +763,29 @@ class Madara extends paperback_extensions_common_1.Source {
                 'vars[paged]': '1',
                 'vars[posts_per_page]': postsPerPage,
                 'vars[orderby]': 'meta_value_num',
+                'vars[sidebar]': 'right',
+                'vars[post_type]': 'wp-manga',
+                'vars[order]': 'desc',
+                'vars[meta_key]': meta_key,
+                'vars[meta_value]': meta_value
+            },
+            cookies: [createCookie({ name: 'wpmanga-adault', value: '1', domain: this.baseUrl })]
+        });
+    }
+    constructAjaxHomepageRequest2(page, postsPerPage, meta_key, meta_value) {
+        return createRequestObject({
+            url: `${this.baseUrl}/wp-admin/admin-ajax.php`,
+            method: 'POST',
+            headers: this.constructHeaders({
+                'content-type': 'application/x-www-form-urlencoded'
+            }),
+            data: {
+                'action': 'madara_load_more',
+                'template': 'madara-core/content/content-archive',
+                'page': page,
+                'vars[paged]': '1',
+                'vars[posts_per_page]': postsPerPage,
+                'vars[orderby]': 'date',
                 'vars[sidebar]': 'right',
                 'vars[post_type]': 'wp-manga',
                 'vars[order]': 'desc',
